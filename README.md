@@ -1,7 +1,7 @@
 # BackEnd
 순서대로 입력할 것\n
 1)깃 저장소를 로컬에 clone하기\n
-clone\n
+<pre><code>	{git clone} </code></pre>
 2)package.json을 통해서 필요한 모듈 다운로드\n
 npm install\n
 3)다운받은 모듈 업데이트\n
