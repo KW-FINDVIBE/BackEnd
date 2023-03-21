@@ -2,10 +2,10 @@
   "name": "find_vive",
   "version": "1.0.0",
   "scripts": {
-    "client": "cd client && yarn start",
+    "client": "cd .. && cd client && yarn start",
     "server": "nodemon server.js",
     "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
-    "build": "cd client && npm run build && cd .."
+    "build": "cd .. && cd client && npm run build && cd .. && cd server"
   },
   "dependencies": {
     "@types/react-router-dom": "^5.3.3",

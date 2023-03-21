@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const port = process.env.PORT || 5000;
 const mysql = require("mysql");
 const dotenv = require("dotenv");
+const path = require("path");
 dotenv.config();
 
 const app = express();
@@ -28,7 +29,7 @@ connection.connect((err) => {
 });
 
 // build 파일 접근
-app.use(express.static(`${__dirname}/client/build`));
+app.use(express.static(`${__dirname}/../client/build`));
 
 // api test
 app.get("/api/hello", (req, res) => {
@@ -80,7 +81,8 @@ app.post("/api/login", (req, res) => {
 
 // react 앱과 연결
 app.get(`*`, (req, res) => {
-  res.sendFile(`${__dirname}/client/build/index.html`);
+  let indexPath = path.join(__dirname, "../client/build/index.html");
+  res.sendFile(indexPath);
 });
 
 app.listen(port, () => console.log(`port: ${port}`));
