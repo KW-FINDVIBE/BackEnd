@@ -21,6 +21,7 @@ const SignUp: React.FunctionComponent = () => {
     try {
       const response = await axios.post("/api/signup", userDate);
       console.log(response.data);
+      navigate("/login");
     } catch (error) {
       console.error(error);
     }

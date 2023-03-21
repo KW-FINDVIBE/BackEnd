@@ -1,11 +1,29 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+export interface LogInUserInfo {
+  email: string;
+  password: string;
+}
 
 const Login: React.FunctionComponent = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [psword, setPsword] = useState("");
+  const [userData, setUserDate] = useState<LogInUserInfo>({
+    email: "",
+    password: "",
+  });
+
+  const sendLogInRequest = async () => {
+    try {
+      const response = await axios.post("/api/login", userData);
+      console.log(response.data);
+      navigate("/home");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div
@@ -39,9 +57,9 @@ const Login: React.FunctionComponent = () => {
         >
           <p>email:</p>
           <input
-            value={email}
+            value={userData.email}
             onChange={(e) => {
-              setEmail(e.target.value);
+              setUserDate({ ...userData, email: e.target.value });
             }}
           />
         </div>
@@ -63,14 +81,20 @@ const Login: React.FunctionComponent = () => {
         >
           <p>psword:</p>
           <input
-            value={psword}
+            value={userData.password}
             onChange={(e) => {
-              setPsword(e.target.value);
+              setUserDate({ ...userData, password: e.target.value });
             }}
           />
         </div>
       </div>
-      <button>로그인</button>
+      <button
+        onClick={() => {
+          sendLogInRequest();
+        }}
+      >
+        로그인
+      </button>
       <button
         onClick={() => {
           navigate("/signup");
