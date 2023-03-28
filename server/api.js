@@ -39,29 +39,57 @@ router.post("/login", (req, res) => {
       }
 
       if (results.length === 0) {
-        res.status(401).send("존재하지 않는 이메일입니다.");
+        res.status(401).send("There is no email.");
         return;
       }
 
       const user_data = results[0];
 
       if (user_data.password != password) {
-        res.status(401).send("비밀번호가 올바르지 않습니다.");
+        res.status(401).send("password is not correct.");
         return;
       }
 
       // 만료기간 7일
       const token = jwt.sign(email, secretKey);
 
-      // find_vibe_token 쿠키에 토큰 저장 + XSS보안 + 쿠키 만료 1시간
+      // find_vibe_token 쿠키에 토큰 저장 + 쿠키 만료 7일
+      // TODO : XSS 공격 대비하기
       res.cookie("find_vibe_token", token, {
-        httpOnly: true,
-        maxAge: 60 * 60 * 1000,
+        httpOnly: false,
+        secure: false,
+        domain: "localhost",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      res.send("success to login");
+      res.send({ success: true });
     }
   );
+});
+
+// api -  로그아웃
+router.post("/logout", (req, res) => {
+  res.clearCookie("find_vibe_token");
+  res.send({ success: true });
+});
+
+// api -  쿠키 확인
+router.post("/check_token", (req, res) => {
+  const { checkToken } = req.body;
+
+  if (!checkToken) {
+    return res.status(401).json({ success: false, message: "Token not found" });
+  }
+
+  try {
+    // 검증 - 실패 시 에러 발생
+    jwt.verify(checkToken, secretKey);
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(401).json({ success: false, message: "Invalid token" });
+  }
 });
 
 module.exports = router;

@@ -1,6 +1,6 @@
-import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { sendCheckTokenRequest, sendLogInRequest } from "../Util/util";
 
 export interface LogInUserInfo {
   email: string;
@@ -15,15 +15,11 @@ const Login: React.FunctionComponent = () => {
     password: "",
   });
 
-  const sendLogInRequest = async () => {
-    try {
-      const response = await axios.post("/api/login", userData);
-      console.log(response.data);
-      navigate("/home");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  useEffect(() => {
+    sendCheckTokenRequest(() => {
+      navigate("/Home");
+    });
+  }, []);
 
   return (
     <div
@@ -90,7 +86,9 @@ const Login: React.FunctionComponent = () => {
       </div>
       <button
         onClick={() => {
-          sendLogInRequest();
+          sendLogInRequest(userData, () => {
+            navigate("/Home");
+          });
         }}
       >
         로그인
