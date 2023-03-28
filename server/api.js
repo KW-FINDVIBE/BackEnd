@@ -1,6 +1,10 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
+
 const router = express.Router();
 const connection = require("./connection");
+
+const secretKey = "1q2w3e4r@"; // 비밀 키
 
 // api test
 router.get("/hello", (req, res) => {
@@ -45,7 +49,17 @@ router.post("/login", (req, res) => {
         res.status(401).send("비밀번호가 올바르지 않습니다.");
         return;
       }
-      res.send("로그인 성공!");
+
+      // 만료기간 7일
+      const token = jwt.sign(email, secretKey);
+
+      // find_vibe_token 쿠키에 토큰 저장 + XSS보안 + 쿠키 만료 1시간
+      res.cookie("find_vibe_token", token, {
+        httpOnly: true,
+        maxAge: 60 * 60 * 1000,
+      });
+
+      res.send("success to login");
     }
   );
 });
