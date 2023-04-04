@@ -5,10 +5,13 @@ const port = process.env.PORT || 5000;
 const dotenv = require("dotenv");
 const path = require("path");
 const apiRouter = require("./api");
+const cookieParser = require("cookie-parser");
+
 dotenv.config();
 
 const app = express();
 
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
