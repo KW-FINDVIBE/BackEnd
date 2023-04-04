@@ -2,33 +2,14 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 
 const router = express.Router();
-const connection = require("./connection");
+const connection = require("../../connection");
 
 // 토큰 키
 const accessTokenKey = "1q2w3e4r@";
 const refreshTokenKey = "123456789a";
 
-// api test
-router.get("/hello", (req, res) => {
-  res.send({ message: "Hello Express!" });
-});
-
-// api - 회원 가입
-router.post("/user/signup", (req, res) => {
-  const { email, password, nickname } = req.body;
-  const sql = `INSERT INTO user_info (email, password, nickname, join_time, is_admin) VALUES (?, ?, ?, now(), false)`;
-  connection.query(sql, [email, password, nickname], (err, result) => {
-    if (err) {
-      console.log(err);
-      res.status(500).json({ error: "Error creating user" });
-      return;
-    }
-    res.json({ message: "User created successfully", success: true });
-  });
-});
-
 // api - 로그인
-router.post("/auth/login", (req, res) => {
+router.post("/login", (req, res) => {
   const { email, password } = req.body;
 
   connection.query(
@@ -98,13 +79,14 @@ router.post("/auth/login", (req, res) => {
 });
 
 // api -  로그아웃
-router.post("/auth/logout", (req, res) => {
+router.post("/logout", (req, res) => {
   res.clearCookie("find_vibe_access_token");
   res.clearCookie("find_vibe_refresh_token");
   res.send({ success: true });
 });
 
-router.post("/auth/check", (req, res) => {
+// check access_token + return user_data
+router.post("/check", (req, res) => {
   const checkToken = req.cookies.find_vibe_access_token;
 
   if (!checkToken) {
@@ -126,7 +108,7 @@ router.post("/auth/check", (req, res) => {
 });
 
 // access 토큰 재발행
-router.post("/auth/refresh", (req, res) => {
+router.post("/refresh", (req, res) => {
   const checkToken = req.cookies.find_vibe_refresh_token;
 
   if (!checkToken) {

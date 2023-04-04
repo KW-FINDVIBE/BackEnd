@@ -4,7 +4,8 @@ const bodyParser = require("body-parser");
 const port = process.env.PORT || 5000;
 const dotenv = require("dotenv");
 const path = require("path");
-const apiRouter = require("./api");
+const authRouter = require("./api/auth/auth");
+const userRouter = require("./api/user/user");
 const cookieParser = require("cookie-parser");
 
 dotenv.config();
@@ -22,7 +23,8 @@ app.use(cors());
 app.use(express.static(`${__dirname}/../client/build`));
 
 // api 엔드 포인트 등록
-app.use("/api", apiRouter);
+app.use("/auth", authRouter);
+app.use("/user", userRouter);
 
 // react 앱과 연결
 app.get(`*`, (req, res) => {

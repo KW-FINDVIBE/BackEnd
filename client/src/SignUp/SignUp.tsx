@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
-interface SignUpUserInfo {
-  email: string;
-  password: string;
-  nickname: string;
-}
+import { SignUpUserInfo } from "../API/user";
 
 const SignUp: React.FunctionComponent = () => {
   const navigate = useNavigate();

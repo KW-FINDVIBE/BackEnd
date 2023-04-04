@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { sendLogInRequest } from "../Util/api";
-
-export interface LogInUserInfo {
-  email: string;
-  password: string;
-}
+import { LogInUserInfo, sendLogInRequest } from "../API/auth";
 
 const Login: React.FunctionComponent = () => {
   const navigate = useNavigate();
@@ -80,8 +75,10 @@ const Login: React.FunctionComponent = () => {
       </div>
       <button
         onClick={() => {
-          sendLogInRequest(userData, () => {
-            navigate("/Home");
+          sendLogInRequest(userData).then((res) => {
+            if (res.success) {
+              navigate("/Home");
+            }
           });
         }}
       >

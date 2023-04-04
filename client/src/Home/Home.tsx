@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import {
-  sendLoginSuccessRequest,
+  sendLoginCheckRequest,
   sendLogOutRequest,
   sendRefreshTokenRequest,
-} from "../Util/api";
-import { useEffect, useState } from "react";
+} from "../API/auth";
 
 const Home: React.FunctionComponent = () => {
   const navigate = useNavigate();
@@ -13,12 +13,14 @@ const Home: React.FunctionComponent = () => {
   const [isLogin, setIsLogin] = useState<boolean>();
 
   const checkJWTToken = () => {
-    sendLoginSuccessRequest().then((res1) => {
+    sendLoginCheckRequest().then((res1) => {
       if (!res1.success) {
         sendRefreshTokenRequest().then((res2) => {
           if (!res2.success) {
-            sendLogOutRequest(() => {
-              navigate("/login");
+            sendLogOutRequest().then((res) => {
+              if (res.success) {
+                navigate("/login");
+              }
             });
           }
           setIsLogin(false);
@@ -48,8 +50,10 @@ const Home: React.FunctionComponent = () => {
       {isLogin && <div>{userName}님의 로그인!</div>}
       <button
         onClick={() => {
-          sendLogOutRequest(() => {
-            navigate("/login");
+          sendLogOutRequest().then((res) => {
+            if (res.success) {
+              navigate("/login");
+            }
           });
         }}
       >
