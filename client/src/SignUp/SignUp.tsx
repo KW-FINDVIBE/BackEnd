@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { sendCheckTokenRequest } from "../Util/util";
 
 interface SignUpUserInfo {
   email: string;
@@ -27,12 +26,6 @@ const SignUp: React.FunctionComponent = () => {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    sendCheckTokenRequest(() => {
-      navigate("/Home");
-    });
-  }, []);
 
   return (
     <div

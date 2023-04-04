@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { sendCheckTokenRequest, sendLogInRequest } from "../Util/util";
+import { sendLogInRequest } from "../Util/api";
 
 export interface LogInUserInfo {
   email: string;
@@ -14,12 +14,6 @@ const Login: React.FunctionComponent = () => {
     email: "",
     password: "",
   });
-
-  useEffect(() => {
-    sendCheckTokenRequest(() => {
-      navigate("/Home");
-    });
-  }, []);
 
   return (
     <div

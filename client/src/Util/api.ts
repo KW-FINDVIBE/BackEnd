@@ -32,28 +32,19 @@ export const sendLogOutRequest = async (navigateLogin: () => void) => {
   }
 };
 
-// 서버에 전달 시, 새로운 자료형의 형태로 보내야 제대로 사용가능
-export interface CheckToken {
-  checkToken: string;
-}
-
-export const sendCheckTokenRequest = async (navigateHome: () => void) => {
-  const cookies = document.cookie.split(";");
-  const tokenCookie = cookies.find((cookie) =>
-    cookie.trim().startsWith("find_vibe_token=")
-  );
-  const checkToken: CheckToken = {
-    checkToken: tokenCookie?.split("=")[1] || "",
-  };
-
+export const sendLoginSuccessRequest = async () => {
   try {
-    const response = await axios.post("/api/check_token", checkToken);
-    if (response.data.success) {
-      console.log("check success!");
-      navigateHome();
-    } else {
-      console.log("check fail!");
-    }
+    const response = await axios.post("/api/login/success");
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const sendRefreshTokenRequest = async () => {
+  try {
+    const response = await axios.post("/api/token/refresh");
+    return response.data;
   } catch (error) {
     console.error(error);
   }
