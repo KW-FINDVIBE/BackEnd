@@ -5,6 +5,7 @@ import {
   sendLogOutRequest,
   sendRefreshTokenRequest,
 } from "../API/auth";
+import { sendMultipartRequest } from "../API/api";
 
 const Home: React.FunctionComponent = () => {
   const navigate = useNavigate();
@@ -48,6 +49,15 @@ const Home: React.FunctionComponent = () => {
     <div>
       <div>로그인 성공해서 Home으로 왔음!</div>
       {isLogin && <div>{userName}님의 로그인!</div>}
+      {isLogin && (
+        <button
+          onClick={() => {
+            navigate("/search");
+          }}
+        >
+          검색하러가기
+        </button>
+      )}
       <button
         onClick={() => {
           sendLogOutRequest().then((res) => {
