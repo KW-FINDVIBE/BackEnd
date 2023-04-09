@@ -1,24 +1,24 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import "./App.css";
-import Login from "./Login/Login";
-import Index from "./Index/Index";
-import SignUp from "./SignUp/SignUp";
-import Home from "./Home/Home";
-import Search from "./Search/Search";
+import React, { lazy, Suspense } from "react";
+import { Routes, Route } from "react-router-dom";
+import IndexPage from "./pages/IndexPage";
 
 const App: React.FunctionComponent = () => {
+  const SignInPage = lazy(() => import("./pages/SignInPage"));
+  const SignUpPage = lazy(() => import("./pages/SignUpPage"));
+  const FindLocationPage = lazy(() => import("./pages/FindLocationPage"));
+  const HotPlacePage = lazy(() => import("./pages/HotPlacePage"));
   return (
-    <>
-      <Router>
+    <div className="w-full min-h-screen font-pretendard text-[16px] whitespace-pre-line scrollbar-hide">
+      <Suspense>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/search" element={<Search />} />
+          <Route path="/" element={<IndexPage />} />
+          <Route path="/signin" element={<SignInPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/findvibe" element={<FindLocationPage />} />
+          <Route path="/hotplace" element={<HotPlacePage />} />
         </Routes>
-      </Router>
-    </>
+      </Suspense>
+    </div>
   );
 };
 
