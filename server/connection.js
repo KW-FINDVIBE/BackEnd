@@ -1,4 +1,5 @@
 const mysql = require("mysql");
+
 const connection = mysql.createConnection({
   host: "localhost",
   user: "findvibe_user",
@@ -7,7 +8,9 @@ const connection = mysql.createConnection({
 });
 
 connection.connect((err) => {
-  if (err) throw err;
+  if (err) {
+    throw err;
+  }
   console.log("Connected to MySQL server");
 });
 

@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const authRouter = require("./api/auth/auth");
 const userRouter = require("./api/user/user");
+const searchRouter = require("./api/search/search");
 const cookieParser = require("cookie-parser");
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(express.static(`${__dirname}/../client/build`));
 // api 엔드 포인트 등록
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
+app.use("/search", searchRouter);
 
 // react 앱과 연결
 app.get(`*`, (req, res) => {
