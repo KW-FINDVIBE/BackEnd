@@ -1,26 +1,25 @@
 import axios from "axios";
 
 export const sendPostRequest = async (path: string, sendData: any | null) => {
-  try {
-    const response = await axios.post(path, sendData);
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
+  const response = await axios.post(path, sendData);
+  return response.data;
 };
 
 // image file을 포함하는 요청 -> multipart로 구현
-export const sendMultipartRequest = async (path: string, formData?: File) => {
+export const sendMultipartRequest = async (
+  path: string,
+  formDatas?: File[]
+) => {
   const form = new FormData();
 
-  if (!formData) {
-    console.log("no ImgFile!");
+  if (!formDatas) {
+    console.log("no ImgFiles!");
     return;
   }
 
-  console.log(formData.name);
-
-  form.append("image", formData, formData.name);
+  formDatas.map((formData, i) => {
+    form.append("image", formData, "image" + i);
+  });
 
   try {
     const response = await axios({

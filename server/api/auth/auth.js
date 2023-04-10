@@ -17,19 +17,21 @@ router.post("/login", (req, res) => {
     (err, results) => {
       if (err) {
         console.error(err);
-        res.sendStatus(500);
+        res.sendStatus(500).json({ success: false, error: "Server Error!" });
         return;
       }
 
       if (results.length === 0) {
-        res.status(403).send("Not Authorized");
+        res.status(401).json({ success: false, error: "Wrong Email." });
         return;
       }
 
       const user_data = results[0];
 
       if (user_data.password != password) {
-        res.status(403).send("password is not correct.");
+        res
+          .status(401)
+          .json({ success: false, error: "Password is not Correct." });
         return;
       }
 
@@ -37,7 +39,6 @@ router.post("/login", (req, res) => {
       const accessToken = jwt.sign(
         {
           email: user_data.email,
-          password: user_data.password,
           nickname: user_data.nickname,
         },
         accessTokenKey,
@@ -48,15 +49,12 @@ router.post("/login", (req, res) => {
       const refreashToken = jwt.sign(
         {
           email: user_data.email,
-          password: user_data.password,
           nickname: user_data.nickname,
         },
         refreshTokenKey,
         { expiresIn: "24h", issuer: "FindVibe" }
       );
 
-      // find_vibe_token 쿠키에 토큰 저장 + 쿠키 만료 7일
-      // TODO : XSS 공격 대비하기
       res.cookie("find_vibe_access_token", accessToken, {
         httpOnly: true,
         secure: false,
@@ -67,13 +65,7 @@ router.post("/login", (req, res) => {
         secure: false,
       });
 
-      /*       
-      domain: "localhost",
-      path: "/",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      */
-
-      res.send({ success: true });
+      res.status(200).json({ success: true, error: "" });
     }
   );
 });
@@ -82,7 +74,7 @@ router.post("/login", (req, res) => {
 router.post("/logout", (req, res) => {
   res.clearCookie("find_vibe_access_token");
   res.clearCookie("find_vibe_refresh_token");
-  res.send({ success: true });
+  res.json({ success: true, error: "" });
 });
 
 // check access_token + return user_data
@@ -90,9 +82,7 @@ router.post("/check", (req, res) => {
   const checkToken = req.cookies.find_vibe_access_token;
 
   if (!checkToken) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Not exist Token." });
+    return res.status(401).json({ success: false, error: "Not exist Token." });
   }
 
   try {
@@ -101,9 +91,21 @@ router.post("/check", (req, res) => {
 
     const { password, ...other } = user_data;
 
-    res.status(200).json({ other, success: true });
+    return res.status(200).json({ other, success: true });
   } catch (error) {
-    res.status(200).json({ success: false });
+    if (error instanceof jwt.TokenExpiredError) {
+      return res
+        .status(401)
+        .json({ success: false, error: "Token is Expired" });
+    }
+
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ success: false, error: "Invalid token" });
+    }
+
+    return res
+      .status(500)
+      .json({ success: false, error: "server error:" + error.message });
   }
 });
 
@@ -113,7 +115,7 @@ router.post("/refresh", (req, res) => {
 
   if (!checkToken) {
     return res
-      .status(401)
+      .status(400)
       .json({ success: false, message: "there is no Token(cookie)" });
   }
 
@@ -124,11 +126,10 @@ router.post("/refresh", (req, res) => {
     const accessToken = jwt.sign(
       {
         email: user_data.email,
-        password: user_data.password,
         nickname: user_data.nickname,
       },
       accessTokenKey,
-      { expiresIn: "1m", issuer: "FindVibe" }
+      { expiresIn: "10m", issuer: "FindVibe" }
     );
 
     res.cookie("find_vibe_access_token", accessToken, {
@@ -136,10 +137,21 @@ router.post("/refresh", (req, res) => {
       secure: false,
     });
 
-    res.status(200).json({ success: true });
+    return res.status(200).json({ success: true, error: "" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Invalid token" });
+    if (error instanceof jwt.TokenExpiredError) {
+      return res
+        .status(401)
+        .json({ success: false, error: "Token is Expired" });
+    }
+
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ success: false, error: "Invalid token" });
+    }
+
+    return res
+      .status(500)
+      .json({ success: false, error: "server error:" + error.message });
   }
 });
 

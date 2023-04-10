@@ -10,10 +10,9 @@ router.post("/signup", (req, res) => {
   connection.query(sql, [email, password, nickname], (err, result) => {
     if (err) {
       console.log(err);
-      res.status(500).json({ error: "Error creating user" });
-      return;
+      return res.status(500).json({ success: false, error: "server error" });
     }
-    res.json({ success: true });
+    return res.json({ success: true, error: "" });
   });
 });
 
